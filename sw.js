@@ -1,5 +1,5 @@
 /* Bartender's Lab V4 — offline-first application shell */
-const CACHE_NAME = 'bartenders-lab-v4-offline-2';
+const CACHE_NAME = 'bartenders-lab-v4-offline-3';
 const APP_SHELL = ['./','./index.html','./manifest.webmanifest','./icon.svg','./icon-192.png','./icon-512.png','./icon-maskable-512.png','./apple-touch-icon.png','./logo-bartenders-lab.png'];
 self.addEventListener('install', event => { event.waitUntil((async()=>{ const cache=await caches.open(CACHE_NAME); await cache.addAll(APP_SHELL); await self.skipWaiting(); })()); });
 self.addEventListener('activate', event => { event.waitUntil((async()=>{ const keys=await caches.keys(); await Promise.all(keys.filter(k=>k.startsWith('bartenders-lab-')&&k!==CACHE_NAME).map(k=>caches.delete(k))); await self.clients.claim(); })()); });
