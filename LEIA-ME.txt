@@ -1,0 +1,32 @@
+BARTENDER'S LAB V4 — CRAFT · CALCULATE · CREATE
+Versão offline-first | Android e PC
+
+CONTEÚDO
+- index.html: aplicação completa
+- manifest.webmanifest: instalação como aplicação (PWA)
+- sw.js: cache dos recursos para utilização offline
+- icon.* e logo-bartenders-lab.png: identidade visual escolhida
+
+INSTALAÇÃO (GitHub Pages — recomendado)
+1. Descompacta o ZIP.
+2. Envia TODOS os ficheiros e a pasta para a raiz do teu repositório GitHub.
+3. Em Settings > Pages, seleciona Deploy from a branch, branch main e / (root).
+4. Aguarda até o GitHub Pages indicar que o site está publicado.
+5. Abre o endereço HTTPS no Chrome ou Edge e espera alguns segundos para o primeiro carregamento e cache.
+6. Android: menu ⋮ > Instalar aplicação ou Adicionar ao ecrã principal.
+7. PC: usa o ícone Instalar na barra de endereço ou o menu do navegador.
+
+DADOS E FUNCIONAMENTO OFFLINE
+- Os dados são guardados localmente no dispositivo (IndexedDB, com compatibilidade localStorage).
+- A aplicação pede armazenamento persistente ao navegador quando suportado.
+- Exporta backups JSON regularmente no Backup Center e guarda-os também num PC/disco externo.
+- Para transferir dados entre dispositivos, exporta no primeiro e importa no segundo.
+- Sincronização automática cloud/multi-dispositivo não incluída nesta versão; fica adiada para uma versão futura.
+- Não limpes os dados do navegador nem desinstales a aplicação antes de exportar um backup.
+- A importação por defeito permite JUNTAR dados; SUBSTITUIR troca a biblioteca atual.
+
+NOTAS IMPORTANTES
+- O temporizador avisa enquanto a aplicação está ativa. Notificações em segundo plano dependem das permissões e do suporte do sistema/navegador; não é um alarme garantido com a aplicação fechada.
+- Os prazos de conservação são estimativas de registo, não garantias de segurança alimentar.
+- Mantém pelo menos duas cópias de segurança em locais diferentes.
+- O primeiro acesso para instalar e guardar os recursos offline deve ser feito com Internet.
