@@ -214,13 +214,66 @@ function saveFormulaProfile(kind){
 }
 function cordialProfile(){ensureFormulaDefaults();const p=db.formulas.cordial.find(x=>x.id===$('coProfile').value)||db.formulas.cordial[0];return {sugar:p.sugar/100,citric:p.citric/100,malic:p.malic/100,asc:(p.ascorbic||0)/100,name:p.name}}
 function calcCordial(){
- const fruit=rowsTotal('co'),p=cordialProfile(),split=$('coAcidSplit').value.split('-').map(Number),sugar=fruit*p.sugar,acid=fruit*(p.citric+p.malic),citric=acid*split[0]/100,malic=acid*split[1]/100,asc=fruit*p.asc,target=+$('coTarget').value||750;
- // preserve the formula's total acid dose while allowing the selected citrate/malate split
- const acidTotal=fruit*(p.citric+p.malic),acidSplitCitric=acidTotal*split[0]/100,acidSplitMalic=acidTotal*split[1]/100;
- lastCordial={fruitWeight:fruit,fruitRows:JSON.parse(JSON.stringify(weightedRows.co)),fruit:rowSummary('co'),sugar,citric:acidSplitCitric,malic:acidSplitMalic,ascorbic:asc,juice:0,yield:target,target,scale:1,acidEquivalent:acidSplitCitric+acidSplitMalic*.857+asc*.876,taEstimate:target>0?(acidSplitCitric+acidSplitMalic*.857+asc*.876)/(target/1000):0,cost:+$('coCost').value||0,notes:$('coNotes').value,profile:$('coProfile').value,profileName:p.name};
- const cost=estimateBatchCost(weightedRows.co,[['Açúcar',sugar,'g'],['Ácido cítrico',acidSplitCitric,'g'],['Ácido málico',acidSplitMalic,'g'],['Ácido ascórbico',asc,'g']]);
- $('coResult').innerHTML=`<div class="stats"><div class="stat"><small>Peso total das frutas</small><b>${fruit.toFixed(1)} g</b></div><div class="stat"><small>Açúcar automático</small><b>${sugar.toFixed(1)} g</b></div><div class="stat"><small>Ácido cítrico</small><b>${acidSplitCitric.toFixed(2)} g</b></div><div class="stat"><small>Ácido málico</small><b>${acidSplitMalic.toFixed(2)} g</b></div><div class="stat"><small>Ácido ascórbico</small><b>${asc.toFixed(2)} g</b></div></div><div class="result"><strong>Frutas</strong><p style="white-space:pre-line">${esc(rowSummary('co')||'Adiciona as frutas e os pesos.')}</p><strong>Fórmula automática:</strong> ${sugar.toFixed(1)} g açúcar · ${acidSplitCitric.toFixed(2)} g cítrico · ${acidSplitMalic.toFixed(2)} g málico · ${asc.toFixed(2)} g ascórbico.<br><small class="muted">Perfil ${esc(p.name)} · proporções definidas por 100 g de fruta. O peso de cada fruta é guardado separadamente.</small><p class="muted">Custo estimado dos ingredientes com preços registados: ${cost.complete?'€'+cost.total.toFixed(2):cost.total>0?'desde €'+cost.total.toFixed(2)+' (faltam preços na Ingredient Library)':'adiciona preços na Ingredient Library para calcular'}.</p></div>`;
-}
+ const fruit=rowsTotal('co');
+
+ if(!Number.isFinite(fruit)||fruit<=0){
+  lastCordial=null;
+  $('coResult').innerHTML='<div class="empty">Introduz os pesos das frutas para calcular a fórmula.</div>';
+  return;
+ }
+
+ const p=cordialProfile();
+ const split=$('coAcidSplit').value.split('-').map(Number);
+ const sugar=fruit*p.sugar;
+ const acidTotal=fruit*(p.citric+p.malic);
+ const acidSplitCitric=acidTotal*split[0]/100;
+ const acidSplitMalic=acidTotal*split[1]/100;
+ const asc=fruit*p.asc;
+ const target=+$('coTarget').value||750;
+
+ lastCordial={
+  fruitWeight:fruit,
+  fruitRows:JSON.parse(JSON.stringify(weightedRows.co)),
+  fruit:rowSummary('co'),
+  sugar,
+  citric:acidSplitCitric,
+  malic:acidSplitMalic,
+  ascorbic:asc,
+  juice:0,
+  yield:target,
+  target,
+  scale:1,
+  acidEquivalent:acidSplitCitric+acidSplitMalic*.857+asc*.876,
+  taEstimate:target>0?(acidSplitCitric+acidSplitMalic*.857+asc*.876)/(target/1000):0,
+  cost:+$('coCost').value||0,
+  notes:$('coNotes').value,
+  profile:$('coProfile').value,
+  profileName:p.name
+ };
+
+ const cost=estimateBatchCost(weightedRows.co,[
+  ['Açúcar',sugar,'g'],
+  ['Ácido cítrico',acidSplitCitric,'g'],
+  ['Ácido málico',acidSplitMalic,'g'],
+  ['Ácido ascórbico',asc,'g']
+ ]);
+
+ $('coResult').innerHTML=`<div class="stats">
+ <div class="stat"><small>Peso total das frutas</small><b>${fruit.toFixed(1)} g</b></div>
+ <div class="stat"><small>Açúcar automático</small><b>${sugar.toFixed(1)} g</b></div>
+ <div class="stat"><small>Ácido cítrico</small><b>${acidSplitCitric.toFixed(2)} g</b></div>
+ <div class="stat"><small>Ácido málico</small><b>${acidSplitMalic.toFixed(2)} g</b></div>
+ <div class="stat"><small>Ácido ascórbico</small><b>${asc.toFixed(2)} g</b></div>
+ </div>
+ <div class="result">
+ <strong>Frutas</strong>
+ <p style="white-space:pre-line">${esc(rowSummary('co')||'Adiciona as frutas e os pesos.')}</p>
+ <strong>Fórmula automática:</strong> ${sugar.toFixed(1)} g açúcar · ${acidSplitCitric.toFixed(2)} g cítrico · ${acidSplitMalic.toFixed(2)} g málico · ${asc.toFixed(2)} g ascórbico.
+ <br><small class="muted">Perfil ${esc(p.name)} · proporções definidas por 100 g de fruta. O peso de cada fruta é guardado separadamente.</small>
+ <p class="muted">Custo estimado dos ingredientes com preços registados: ${cost.complete?'€'+cost.total.toFixed(2):cost.total>0?'desde €'+cost.total.toFixed(2)+' (faltam preços na Ingredient Library)':'adiciona preços na Ingredient Library para calcular'}.</p>
+ </div>`;
+ }
+ 
 function calcSuperJuiceV4(){let peel=rowsTotal('sj'),factor=peel/15,citric=10*factor,malic=5*factor,water=250*factor;lastSJ={citrus:weightedRows.sj.map(x=>({...x})),peel,water,juice:0,target:0,addedCitric:citric,addedMalic:malic,naturalTA:0};$('sjResult').innerHTML=`<div class="stats"><div class="stat"><small>Peso total das raspas</small><b>${peel.toFixed(1)} g</b></div><div class="stat"><small>Ácido cítrico</small><b>${citric.toFixed(2)} g</b></div><div class="stat"><small>Ácido málico</small><b>${malic.toFixed(2)} g</b></div><div class="stat"><small>Água</small><b>${water.toFixed(1)} ml</b></div></div><div class="result">Proporção aplicada: por cada 15 g de raspas → 10 g cítrico + 5 g málico + 250 ml água. Não precisas de introduzir qualquer outra quantidade.</div>`}
 function fruitJuiceProfile(){ensureFormulaDefaults();return db.formulas.fruitJuice.find(x=>x.id===$('fjProfile').value)||db.formulas.fruitJuice[0]}
 function calcFruitJuice(){let fruit=rowsTotal('fj'),profile=fruitJuiceProfile(),split=$('fjAcidSplit').value.split('-').map(Number),sugar=fruit*profile.sugar/100,water=fruit*profile.water/100,acid=fruit*(profile.citric+profile.malic)/100,citric=acid*split[0]/100,malic=acid*split[1]/100;window.lastFruitJuice={fruit,rows:JSON.parse(JSON.stringify(weightedRows.fj)),sugar,water,citric,malic,profile:profile.id,profileName:profile.name};let cost=estimateBatchCost(weightedRows.fj,[['Açúcar',sugar,'g'],['Água',water,'ml'],['Ácido cítrico',citric,'g'],['Ácido málico',malic,'g']]);$('fjResult').innerHTML=`<div class="stats"><div class="stat"><small>Peso total das frutas</small><b>${fruit.toFixed(1)} g</b></div><div class="stat"><small>Açúcar automático</small><b>${sugar.toFixed(1)} g</b></div><div class="stat"><small>Água automática</small><b>${water.toFixed(1)} ml</b></div><div class="stat"><small>Ácido cítrico</small><b>${citric.toFixed(2)} g</b></div><div class="stat"><small>Ácido málico</small><b>${malic.toFixed(2)} g</b></div></div><div class="result"><strong>Composição</strong><p style="white-space:pre-line">${esc(rowSummary('fj'))}</p>Perfil ${esc(profile.name)}. As quantidades são calculadas a partir do peso total das frutas; não precisas de introduzir os restantes ingredientes.<p class="muted">Custo estimado dos ingredientes com preços registados: ${cost.complete?'€'+cost.total.toFixed(2):cost.total>0?'desde €'+cost.total.toFixed(2)+' (faltam preços na Ingredient Library)':'adiciona preços na Ingredient Library para calcular'}.</p></div>`}
