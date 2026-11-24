@@ -30,3 +30,21 @@ NOTAS IMPORTANTES
 - Os prazos de conservação são estimativas de registo, não garantias de segurança alimentar.
 - Mantém pelo menos duas cópias de segurança em locais diferentes.
 - O primeiro acesso para instalar e guardar os recursos offline deve ser feito com Internet.
+
+
+ATUALIZAÇÃO CORDIAL LAB — BIBLIOTECA POR FRUTA
+- Mantém os perfis Bright, Balanced e Rich.
+- Cada fruta tem percentagens próprias de açúcar e doses próprias de ácido cítrico, málico e ascórbico, configuráveis em Gerir fórmulas de cordial.
+- Inclui referências iniciais para morango, framboesa, pêssego branco, maracujá, ananás e manga, baseadas na tabela profissional de cordiais da Les Vergers Boiron (2026). Os valores Bright e Rich são variações de trabalho em torno da referência Balanced, não valores publicados.
+- As referências Boiron são para puré de fruta; ao usar fruta inteira, ajusta ao rendimento e à prova. Podes acrescentar outras frutas e guardar a fonte e as notas técnicas.
+- A funcionalidade anterior de criar perfis personalizados globais continua disponível.
+- O Cordial Lab não calcula nem adiciona água. A água das áreas Fruit Juice Lab e Citrus Super Juice mantém-se.
+- A nova biblioteca é incluída nos backups JSON e na migração IndexedDB/localStorage.
+
+
+ATUALIZAÇÃO CORDIAL LAB – BIBLIOTECA TÉCNICA
+- Bright, Balanced e Rich mantidos por fruta.
+- Biblioteca alargada com 35 frutas e referências rastreáveis.
+- Dados Boiron são para puré; referências Liquor.com/Kevin Kos/Diageo identificadas separadamente.
+- Bright/Rich são adaptações experimentais ±10%, não receitas publicadas.
+- Guardar backup dos dados antes de substituir ficheiros no GitHub.
