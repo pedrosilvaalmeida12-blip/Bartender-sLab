@@ -1,6 +1,5 @@
-/* Bartender's Lab V4 — offline-first application shell */
-const CACHE_NAME = 'bartenders-lab-v4-cordial-reference-library-v2';
-const APP_SHELL = ['./','./index.html','./manifest.webmanifest','./icon.svg','./icon-192.png','./icon-512.png','./icon-maskable-512.png','./apple-touch-icon.png','./logo-bartenders-lab.png'];
-self.addEventListener('install', event => { event.waitUntil((async()=>{ const cache=await caches.open(CACHE_NAME); await cache.addAll(APP_SHELL); await self.skipWaiting(); })()); });
-self.addEventListener('activate', event => { event.waitUntil((async()=>{ const keys=await caches.keys(); await Promise.all(keys.filter(k=>k.startsWith('bartenders-lab-')&&k!==CACHE_NAME).map(k=>caches.delete(k))); await self.clients.claim(); })()); });
-self.addEventListener('fetch', event => { const req=event.request; if(req.method!=='GET'||new URL(req.url).origin!==self.location.origin)return; if(req.mode==='navigate'){ event.respondWith((async()=>{ try { const res=await fetch(req); if(res&&res.ok){const c=await caches.open(CACHE_NAME); await c.put('./index.html',res.clone());} return res; } catch(_){return (await caches.match('./index.html'))||(await caches.match('./'));} })()); return; } event.respondWith((async()=>{const cached=await caches.match(req); if(cached)return cached; try{const res=await fetch(req); if(res&&res.ok){const c=await caches.open(CACHE_NAME); await c.put(req,res.clone());} return res;}catch(_){return cached||Response.error();}})()); });
+const CACHE='bartenders-lab-v42-syrup-infusion-logo';
+const CORE=['./','./index.html','./manifest.webmanifest','./icon.svg','./icon-192.png','./icon-512.png','./apple-touch-icon.png','./logo-bartenders-lab.png'];
+self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(CORE)).then(()=>self.skipWaiting())));
+self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE).map(key=>caches.delete(key)))).then(()=>self.clients.claim())));
+self.addEventListener('fetch',event=>{if(event.request.method!=='GET')return;event.respondWith(caches.match(event.request).then(cached=>cached||fetch(event.request).then(response=>{const copy=response.clone();caches.open(CACHE).then(cache=>cache.put(event.request,copy));return response;}).catch(()=>caches.match('./index.html'))));});
